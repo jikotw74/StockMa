@@ -2,23 +2,25 @@
   "name": "herku-test",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "ioServer.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node ioServer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
   "engines": {
-    "node": "6.10.0"
+    "node": "8.5.0"
   },
   "dependencies": {
     "jquery": "^3.2.1",
     "json-server": "^0.12.0",
-    "puppeteer": "^0.11.0"
+    "puppeteer": "^0.11.0",
+    "socket.io-client": "^2.0.3"
   },
   "devDependencies": {
     "json-server": "^0.12.0",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "socket.io": "^2.0.3"
   }
 }
