@@ -1,4 +1,5 @@
 const port = process.env.PORT || 3001;
+console.log(port);
 
 var server = require('http').createServer();
 var io = require('socket.io')(server);
@@ -11,4 +12,6 @@ io.on('connection', function(client){
   	});
   	client.on('disconnect', function(){});
 });
-server.listen(port);
+server.listen(port, () => {
+  console.log('Server is running')
+});
