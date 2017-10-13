@@ -39,6 +39,7 @@ async function getStocks(stock_ids){
 
         // start brwoser
         browser = await puppeteer.launch({
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
             // headless: false,
             // slowMo: 250 // slow down by 250ms
         });
