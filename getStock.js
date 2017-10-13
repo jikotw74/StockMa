@@ -17,7 +17,7 @@ async function getStockInfo(keys){
 }
 
 async function getStock(stock_id){
-    // console.log('[getStock id] ', stock_id);
+    console.log('[getStock id] ', stock_id);
 
     now = new Date();
     const page = await browser.newPage();
@@ -61,7 +61,7 @@ async function getStocks(stock_ids){
             }
         }));
 
-        // console.log('[getStocks queryKeys] ', queryKeys);
+        console.log('[getStocks queryKeys] ', queryKeys);
 
         if(queryKeys.length > 0){
             const keys = queryKeys.join('|');
