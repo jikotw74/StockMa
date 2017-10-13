@@ -59,6 +59,9 @@ io.on('connection', function(client){
 
   	client.on('disconnect', function(){
   		console.log('disconnect');
+  		clearInterval(intervalID);
+  		intervalID = false;
+  		lastUpdatedTime = 0;
   	});
 });
 server.listen(port, () => {
