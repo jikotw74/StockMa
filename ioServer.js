@@ -10,6 +10,7 @@ io.on('connection', function(client){
 	let intervalID = false;
 	let lastUpdatedTime = 0;
 	console.log('connection');
+
   	client.on('registStocks', stock_ids => {
   		let isInit = false;
   		// console.log('registStocks', stock_ids)
@@ -55,14 +56,10 @@ io.on('connection', function(client){
 			}, 10000)
   		}
   	});
-  	// client.on('getStockPrice', async (stock_ids) => {
-  	// 	console.log(stock_ids);
-  	// 	// client.emit('test_response', data + (new Date().getTime()));
-  	// 	const respose = await getStocks(stock_ids);
 
-  	// 	client.emit('updateStockPrice', respose);
-  	// });
-  	client.on('disconnect', function(){});
+  	client.on('disconnect', function(){
+  		console.log('disconnect');
+  	});
 });
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`)
