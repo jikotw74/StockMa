@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const stockDB = require('./stockDB.json');
 let browser = false;
 
 async function getStockInfo(keys){
@@ -8,7 +9,7 @@ async function getStockInfo(keys){
     const page = await browser.newPage();
     await page.goto(
         `http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${keys}&json=1&delay=0&_=${now.getTime()}`, 
-        {waitUntil: 'networkidle'}
+        // {waitUntil: 'networkidle'}
     );
     const bodyHandle = await page.$('body');
     const html = await page.evaluate(body => body.innerHTML, bodyHandle);
@@ -51,25 +52,44 @@ async function getStocks(stock_ids){
         // console.log(cookies);
 
         // get query keys
-        await Promise.all(stock_ids.map(async (id) => {
-            const res = await getStock(id);
-            if(res && res.rtcode === '0000'){
-                if(res.msgArray && res.msgArray[0] && res.msgArray[0].key){
-                    // console.log(res.msgArray[0].key);
-                    queryKeys.push(res.msgArray[0].key);    
-                }
+        let count = 0;
+        let queryGroup;
+        for(let id of stock_ids){
+            let queryKey = false;
+            const stock = stockDB[id];
+            if(stock){
+                const prefix = stock.isOtc ? 'otc' : 'tse';
+                queryKey = `${prefix}_${id}.tw`;
             }
-        }));
+            if(queryKey){                
+                if(count % 10 === 0){
+                    queryGroup = [queryKey];
+                    queryKeys.push(queryGroup);
+                }else{
+                    queryGroup.push(queryKey);
+                }
+                count++;
+            }
+        }
 
-        console.log('[getStocks queryKeys] ', queryKeys);
+        // console.log('[getStocks queryKeys] ', queryKeys);
 
         if(queryKeys.length > 0){
-            const keys = queryKeys.join('|');
-            result = await getStockInfo(keys);
-        }
-    }
+            for(let qGroup of queryKeys){
+                let keys = qGroup.join('|');
+                let info = await getStockInfo(keys);
 
-    await browser.close();
+                if(!result){
+                    result = info;
+                }else{
+                    result.msgArray = result.msgArray.concat(info.msgArray);
+                }
+            }
+        }
+
+        await browser.close();
+    }
+    
     // console.log('[getStocks return] ', result);
     return result;
 }
