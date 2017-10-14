@@ -10,13 +10,14 @@ let running = false;
 
 setInterval(async () => {
 	if(running){
+        console.log('query running');
 		return;
 	}
-  	// console.log(`interval start ${intervalID}`);
   	const now = new Date();
   	const nowH = now.getHours();
   	const isRealTimeMode = nowH >= 8 && nowH <= 12;
-  	if(lastCheckTime === 0 || isRealTimeMode){
+    console.log('lastCheckTime', lastCheckTime, 'isRealTimeMode', isRealTimeMode);
+  	if(lastCheckTime === 0 || isRealTimeMode){        
   		let lastTime = 0;
   		running = true;
 		const response = await getStocks(Object.keys(STOCKS));  
@@ -42,8 +43,7 @@ setInterval(async () => {
 }, 10000);
 
 io.on('connection', function(client){
-	let lastTime = 0;
-  	let intervalID = false;
+	let initInfo = false;
 	console.log('connection');
 
   	client.on('registStocks', stock_ids => {
@@ -57,14 +57,17 @@ io.on('connection', function(client){
   				lastCheckTime = 0;
   			}
   		});
+
+        if(!initInfo){
+            client.emit('updateStocks', STOCKS);
+            initInfo = true;
+        }
   	});
 
   	client.on('disconnect', function(){
   		console.log('disconnect');
-  		clearInterval(intervalID);
-  		intervalID = false;
   	});
 });
 server.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
+    console.log(`Server is running on port ${port}`)
 });
