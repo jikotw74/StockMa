@@ -11,6 +11,8 @@ var io = require('socket.io')(server);
 let lastCheckTime = 0;
 let running = false;
 
+const DEV = process.env.NODE_ENV === 'development';
+
 setInterval(async () => {
 	if(running){
         console.log('query running');
@@ -18,7 +20,10 @@ setInterval(async () => {
 	}
   	const now = new Date();
   	const nowH = now.getHours();
-  	const isRealTimeMode = nowH >= 8 && nowH <= 14;
+    const realTimeFrom = DEV ? 9 : 1;
+    const realTimeto = DEV ? 14 : 6;
+  	const isRealTimeMode = nowH >= realTimeFrom && nowH <= realTimeto;
+    console.log('realTimeFrom', realTimeFrom, 'realTimeto', realTimeto);
     console.log('lastCheckTime', lastCheckTime, 'isRealTimeMode', isRealTimeMode, 'nowH', nowH);
   	if(lastCheckTime === 0 || isRealTimeMode){        
   		let lastTime = 0;
