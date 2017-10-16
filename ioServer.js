@@ -3,7 +3,10 @@ const getStocks = require('./getStock');
 const port = process.env.PORT || 3001;
 let STOCKS = {};
 
-var server = require('http').createServer();
+var server = require('http').createServer((req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end();
+});
 var io = require('socket.io')(server);
 let lastCheckTime = 0;
 let running = false;
@@ -15,8 +18,8 @@ setInterval(async () => {
 	}
   	const now = new Date();
   	const nowH = now.getHours();
-  	const isRealTimeMode = nowH >= 8 && nowH <= 12;
-    console.log('lastCheckTime', lastCheckTime, 'isRealTimeMode', isRealTimeMode);
+  	const isRealTimeMode = nowH >= 8 && nowH <= 14;
+    console.log('lastCheckTime', lastCheckTime, 'isRealTimeMode', isRealTimeMode, 'nowH', nowH);
   	if(lastCheckTime === 0 || isRealTimeMode){        
   		let lastTime = 0;
   		running = true;
