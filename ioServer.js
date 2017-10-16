@@ -4,7 +4,7 @@ const port = process.env.PORT || 3001;
 let STOCKS = {};
 
 var server = require('http').createServer((req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://stock-bin.netlify.com');
     res.end();
 });
 var io = require('socket.io')(server);
