@@ -27,31 +27,37 @@ setInterval(async () => {
         return;
     }
 
-  	if(lastCheckTime === 0 || isRealTimeMode){        
-  		let lastTime = 0;
-  		running = true;
-		const response = await getStocks(Object.keys(STOCKS));  
-		if(response && response.msgArray){
-			response.msgArray.forEach(msg => {
-				STOCKS[msg.c] = {
-					...STOCKS[msg.c],
-					updatedTime: msg.tlong,
-					lastPrice: msg.y,
-					nowPrice: msg.z
-				}
-				if(msg.tlong > lastTime){
-					lastTime = msg.tlong;
-				}
-			});		
-			if(lastTime > lastCheckTime){
-				lastCheckTime = lastTime;
-				io.emit('updateStocks', STOCKS);
-			}	
-		}				
+  	if(lastCheckTime === 0 || isRealTimeMode){     
+        try {
+            let lastTime = 0;
+            running = true;
+            const response = await getStocks(Object.keys(STOCKS));  
+            if(response && response.msgArray){
+                response.msgArray.forEach(msg => {
+                    STOCKS[msg.c] = {
+                        ...STOCKS[msg.c],
+                        updatedTime: msg.tlong,
+                        lastPrice: msg.y,
+                        nowPrice: msg.z
+                    }
+                    if(msg.tlong > lastTime){
+                        lastTime = msg.tlong;
+                    }
+                });     
+                if(lastTime > lastCheckTime){
+                    lastCheckTime = lastTime;
+                    io.emit('updateStocks', STOCKS);
+                }   
+            }       
+        }
+        catch (e) {
+            console.log(e);
+            running = false;
+        }   
   	}
 
     running = false;
-    
+
 }, 10000);
 
 io.on('connection', function(client){
