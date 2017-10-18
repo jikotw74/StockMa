@@ -14,10 +14,6 @@ let running = false;
 const DEV = process.env.NODE_ENV === 'development';
 
 setInterval(async () => {
-	if(running){
-        console.log('query running');
-		return;
-	}
   	const now = new Date();
   	const nowH = now.getHours();
     const realTimeFrom = DEV ? 9 : 1;
@@ -25,6 +21,12 @@ setInterval(async () => {
   	const isRealTimeMode = nowH >= realTimeFrom && nowH <= realTimeto;
     console.log('realTimeFrom', realTimeFrom, 'realTimeto', realTimeto);
     console.log('lastCheckTime', lastCheckTime, 'isRealTimeMode', isRealTimeMode, 'nowH', nowH);
+
+    if(running){
+        console.log('query running');
+        return;
+    }
+
   	if(lastCheckTime === 0 || isRealTimeMode){        
   		let lastTime = 0;
   		running = true;
@@ -45,9 +47,11 @@ setInterval(async () => {
 				lastCheckTime = lastTime;
 				io.emit('updateStocks', STOCKS);
 			}	
-		}
-		running = false;				
+		}				
   	}
+
+    running = false;
+    
 }, 10000);
 
 io.on('connection', function(client){
